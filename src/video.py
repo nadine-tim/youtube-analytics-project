@@ -1,6 +1,6 @@
 import os
 from googleapiclient.discovery import build
-from googleapiclient.errors import HttpError
+from src.videoNotFound import VideoNotFound
 
 
 class Video:
@@ -17,17 +17,17 @@ class Video:
                                                id=video_id
                                                ).execute()
             if len(video['items']) == 0:
-                raise HttpError
-        except:
-            self.title = None
-            self.url = None
-            self.view_count = None
-            self.like_count = None
-        else:
+                raise VideoNotFound
             self.title = video['items'][0]['snippet']['title']
             self.url = f"https://www.youtube.com/channel/{video_id}"
             self.view_count = video['items'][0]['statistics']['viewCount']
             self.like_count = video['items'][0]['statistics']['likeCount']
+
+        except VideoNotFound:
+            self.title = None
+            self.url = None
+            self.view_count = None
+            self.like_count = None
 
     def __str__(self):
         return f'{self.title}'
